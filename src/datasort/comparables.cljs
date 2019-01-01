@@ -1,9 +1,8 @@
 (ns datasort.comparables
     (:require [cljs.reader :as reader]))
 
-;; probably not a very good idea to wrap all "primitives" in an object 
-;; but lets acutally decide upon benchmarking it
-;; I think this should be pretty slow
+;; probably not a very good idea to wrap everything in an object
+;; but this could be used for demo while working on the sort api
 
 (def dataset
   [{:localtime "2018-12-20T14:58:00.000-00:00"
@@ -84,7 +83,7 @@
      (sort-by first)
      (map second))
 
-;; example with higher order resolver function
+;; example with complex resolver function
 (->> dataset 
      (map (fn [record] [(compose-sort-vector [#(reader/read-date (:localtime %))] record) record]))
      (sort-by first)

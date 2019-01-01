@@ -1,10 +1,25 @@
-# datasort
+# datasort - Exploring data visually by sorting
 
-Toy project on sortig log messages - semi structured tabular data
+Explore data in a tabular UI using null friendly, deterministic sorting implemented in ClojureScript. The leading example for implementation is sorting json log messages with arbitrary properties. Inspired by the great *clojure.core/sort-by* function.
 
-## Overview
+## datasort.comparators - DSL for multi-field comparators
 
-FIXME: Write a paragraph about the library/project and highlight its goals.
+### Limitations of the core apis that I know of
+
+* Sorting based on *vectors* of sort partitions **does not allow for sorting nils last**
+* Sorting nils last using *clojure.core/sort-by* requires a custom comparator that is **coupled to the structure of keyfn but cannot declared in-line**
+* Sorting in reverse order using *clojure.core/sort-by* requires a custom comparator that is **coupled to the structure of keyfn but cannot declared in-line**
+
+### API Requirements
+
+Investigating on the core apis made me write down what I was looking for when declaring comparators for this project:
+
+1. multi-field sorting must be supported (sorting in partitions)
+1. each sort partition must be configurable to be used in natural or reversed order
+1. it must be possible to sort nils last within each partition
+1. dynamic generation of sort orders should be simple
+
+I decided to build a custom dsl for declaring comparators - see datasort.comparators.
 
 ## Setup
 
@@ -34,6 +49,4 @@ get live reloading, nor a REPL.
 
 ## License
 
-Copyright © 2014 FIXME
-
-Distributed under the Eclipse Public License either version 1.0 or (at your option) any later version.
+Distributed under the Eclipse Public License version 2.0
