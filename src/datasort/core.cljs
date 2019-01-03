@@ -19,11 +19,11 @@
 
 (defonce state
   (reagent/atom 
-    {:columns {0 {:col-id "id"        :resolver-fn :id} 
-               1 {:col-id "api"       :resolver-fn :api} 
-               2 {:col-id "eventid"   :resolver-fn :eventid} 
-               3 {:col-id "duration"  :resolver-fn :duration} 
-               4 {:col-id "sessionid" :resolver-fn :sessionid}}
+    {:columns [{:col-id "id"        :resolver-fn :id} 
+               {:col-id "api"       :resolver-fn :api} 
+               {:col-id "eventid"   :resolver-fn :eventid} 
+               {:col-id "duration"  :resolver-fn :duration} 
+               {:col-id "sessionid" :resolver-fn :sessionid}]
      :logs-by-id  (into (sorted-map) (map #(vector (:id %) %) dataset))
      :sort-criteria [[:id (csort/cmp-fn ::csort/asc)]]}))
 
@@ -37,8 +37,15 @@
 (defn update-sort-criteria [new-value]
   (swap! state assoc :sort-criteria new-value))
 
-(defn update-sort-criterion [resolver-kw]
-  (println (str "TODO: implement updating sort order by clicking on sort-criterion - " resolver-kw)))
+(defn update-sort-criterion [col-id]
+  @state
+  (let [sort-criteria (:sort-criteria @state)
+        resolver-fn (->> (:columns @state)
+                         (filter #(= col-id (:col-id %)))
+                         (first)
+                         (:resolver-fn))
+        sort-criteria [[resolver-fn (csort/cmp-fn ::csort/asc)]]]
+    (swap! state assoc :sort-criteria sort-criteria)))
 
 ;; ==============================================================================
 ;; queries
@@ -58,19 +65,18 @@
   [:table
     [:thead
       [:tr
-        (for [[col-index {:keys [col-id resolver-fn]}] (q-columns)]
+        (for [{:keys [col-id]} (q-columns)]
           ^{:key col-id}
-          [:th {:width "200" :on-click #(update-sort-criterion resolver-fn)} col-id])]]
+          [:th {:width "200" :on-click #(update-sort-criterion col-id)} col-id])]]
     [:tbody
-      (let [cols (q-columns)]
-        (for [record (q-sorted-records)]
-          ^{:key (:id record)} 
-          [:tr
-            [:td (:id record)]
-            [:td (:api record)]
-            [:td (:eventid record)]
-            [:td (:duration record)] 
-            [:td (:sessionid record)]]))]])
+      (for [record (q-sorted-records)] 
+        ^{:key (:id record)} 
+        [:tr ;; todo render based on selected columns
+          [:td (:id record)]
+          [:td (:api record)]
+          [:td (:eventid record)]
+          [:td (:duration record)] 
+          [:td (:sessionid record)]])]])
 
 (defn home []
   [:div {:style {:margin "auto"
