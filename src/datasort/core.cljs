@@ -39,13 +39,15 @@
 
 (defn update-sort-criterion [col-id]
   @state
-  (let [sort-criteria (:sort-criteria @state)
-        resolver-fn (->> (:columns @state)
+  (let [col-descriptor (->> (:columns @state)
                          (filter #(= col-id (:col-id %)))
-                         (first)
-                         (:resolver-fn))
-        sort-criteria [[resolver-fn (csort/cmp-fn ::csort/asc)]]]
-    (swap! state assoc :sort-criteria sort-criteria)))
+                         (first))
+        sort-criteria (:sort-criteria @state)]
+    ;; TODO: to implement asc/desc toggle 
+    ;; need to refactor sort-criteria ...
+    (swap! state assoc 
+      :sort-criteria 
+      [[(:resolver-fn col-descriptor) (csort/cmp-fn ::csort/asc)]])))
 
 ;; ==============================================================================
 ;; queries
