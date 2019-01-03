@@ -43,3 +43,57 @@
       (and           (= ::nils-first nil-sorting) (= ::desc order))
       (compare-many [[some? compare]              [identity #(compare %2 %1)]])
       :else (throw (js/Error. (str "Not supported keyword combination: " [order nil-sorting]))))))
+
+
+;; TODO: supply data api
+
+;; requires a "compile" phase that takes edn and returns a function
+
+(defn compile-comparator
+  [{::keys [nils order]}]
+  (let [nils-criterion ({nil [nil? compare]
+                         ::last [nil? compare]
+                         ::nils-last [nil? compare]
+                         ::first [some? compare]
+                         ::nils-first [some? compare]} 
+                        nils)
+        order-criterion ({nil [identity compare]
+                          ::asc [identity compare] 
+                          ::ascending [identity compare]
+                          ::desc [identity #(compare %2 %1)]
+                          ::descending [identity #(compare %2 %1)]}
+                         order)]
+    (if (or (nil? nils-criterion) (nil? order-criterion))
+      (throw (js/Error. (str "No mapping known for: " [order nils])))
+      (compare-many [nils-criterion order-criterion]))))
+
+(defn compile-criteria [criteria]
+  (map (fn [[resolver-fn comparator-spec]]
+         [resolver-fn (compile-comparator comparator-spec)])
+       criteria))
+
+(defn sort-by-criteria [criteria-spec coll]
+    (sort-by-many (compile-criteria criteria-spec) coll))
+  
+
+(comment 
+  (in-ns 'datasort.criteriasort)
+
+  (sort (compile-comparator {::order ::desc ::nils ::nils-first}) [nil 1 2 3 3 2 1 nil])
+  
+  (def dataset
+    [{:id 1 :api "POST /foo" :duration 200 :sessionid "xxx-1"}
+     {:id 2 :api "POST /foo" :duration 150 :sessionid "xxx-1"}
+     {:id 3 :api "POST /bar" :duration 150 :sessionid "xxx-2"}
+     {:id 4 :eventid "foo-created" :duration 150 :sessionid "xxx-2"}])
+  
+  (sort-by-many
+    (compile-criteria
+      [[:sessionid {::order ::asc}]
+       [:duration {::order ::asc}]])
+    dataset)
+  
+  (sort-by-criteria
+    [[:api {::order ::asc ::nils ::nils-first}]
+     [:duration {::order ::desc}]]
+    dataset))
