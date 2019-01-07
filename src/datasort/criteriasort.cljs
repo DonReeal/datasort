@@ -7,17 +7,18 @@
 ;; * ALTERNATIVE: maybe sufficient: skip global sorting, use group-by directly?
 ;; * ALIKE PROBLEM: composite indexes in db-systems, they require ASC DESC to be declared up front!
 ;;                  (kibana doens not support arbitrary coposite keys for sorting <-> they would require composite indexes)
-;; * ALIKE PROBLEM: (exploratory) data analysis - e.g python.panda [DataFrames Indexes Series]
-;;                  ! think of this as using a sample data set without cleaning, transforming and putting it into a dataframe upfront !
+;; * ALIKE PROBLEM: (exploratory) data analysis
+;;                  e.g what you do before you shove data into python.panda [DataFrames Indexes Series]
 
 ;; fn names nicked from https://grokbase.com/t/gg/clojure/138zq4ch8z/sorting-a-collection-on-multiple-fields
 
+;; functions based api ========================================================
 (defn compare-many [criteria]
-  ;; TODO: API ok if stable sort will be needed for large collections?
   (fn [a b] ;; returns a comparator for a and b
     (loop [criteria criteria]
       (if (empty? criteria)
-        0 ;; simple case: allow equally sorted records
+        ;; general implementation - allow equally sorted records
+        0 ;; consider throwing a dev-error - this would be useful for ordering deterministically
         (let [criterion (first criteria)            ;; TODO #lib #spec criteria must not be empty (no need (sort-by default-key-fn coll) is easy)
               [resolver-fn comparator-fn] criterion ;; TODO #lib #spec Each criterion must contain a resolver-fn (returns nil or deterministic/single, sortable type) and a comparator-fn
               criteria-value-a (resolver-fn a)
@@ -44,10 +45,15 @@
       (compare-many [[some? compare]              [identity #(compare %2 %1)]])
       :else (throw (js/Error. (str "Not supported keyword combination: " [order nil-sorting]))))))
 
+(defn- cmp-fn2 [natural-order? nils-last?] ;; TODO spec only bools allowed
+  (let [handle-nils-criterion  ({true  [nil? compare]
+                                 false [nil? #(compare %2 %1)]}
+                                nils-last?)
+        handle-order-criterion ({true  [identity compare]
+                                 false [identity #(compare %2 %1)]}
+                                natural-order?)]
+    (compare-many [handle-nils-criterion handle-order-criterion])))
 
-;; TODO: supply data api
-
-;; requires a "compile" phase that takes edn and returns a function
 
 (defn compile-comparator
   [{::keys [nils order]}]
