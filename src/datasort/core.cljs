@@ -18,33 +18,33 @@
 (defonce state
   (reagent/atom 
     {:logs-by-id (into (sorted-map) (map #(vector (:id %) %) dataset))
-     ;; the rows selected to display
-     :columns [{:col-id "id"        :resolver-fn :id} 
-               {:col-id "api"       :resolver-fn :api} 
-               {:col-id "eventid"   :resolver-fn :eventid} 
-               {:col-id "duration"  :resolver-fn :duration} 
-               {:col-id "sessionid" :resolver-fn :sessionid}]
+     :columns ;; the columns selected to display
+     [{:col-id "id"        :resolver-fn :id} 
+      {:col-id "api"       :resolver-fn :api} 
+      {:col-id "eventid"   :resolver-fn :eventid} 
+      {:col-id "duration"  :resolver-fn :duration} 
+      {:col-id "sessionid" :resolver-fn :sessionid}]
+     :columns-by-id ;; table model - TODO is associative access required or would a vector do?
+     {"id"        {:resolver-fn :id} 
+      "api"       {:resolver-fn :api} 
+      "eventid"   {:resolver-fn :eventid} 
+      "duration"  {:resolver-fn :duration} 
+      "sessionid" {:resolver-fn :sessionid}}
      ;; default sort-criteria to be rendered
-     :sort-criteria [["id"        [:id {}]] 
-                     ["api"       [:api {}]] 
-                     ["eventid"   [:eventid {}]] 
-                     ["duration"  [:duration {}]]
-                     ["sessionid" [:sessionid {}]]]
-
-     :sort-criteria2 [["id"        :id ::asc]
-                      ["api"       :api ::asc]
-                      ["eventid"   :eventid ::asc]
-                      ["duration"  :duration ::asc]
-                      ["sessionid" :sessionid ::asc]]}))
-
-      
-
-(defn asc-comparator []
-  csort/compile-comparator {::csort/nils ::csort/last ::csort/order ::csort/asc })
-
-(defn desc-comparator []
-  (comp -1 asc-comparator))
+     :sort-criteria ;; 
+     [["id"        ::asc]
+      ["api"       ::asc]
+      ["eventid"   ::asc]
+      ["duration"  ::asc]
+      ["sessionid" ::asc]]}))
                      
+
+(defn asc-compare []
+  ;; BROKEN :( csort/compile-comparator {::csort/nils ::csort/last ::csort/order ::csort/asc})
+  (csort/cmp-fn2 false true))
+
+(defn desc-compare []
+  (csort/cmp-fn2 false false))
 
 (add-watch state :trace-app-state
   (fn [key atom old-state new-state]
@@ -58,18 +58,15 @@
 
 (defn toggle-sort-criterion [col-id]
   @state
-  (let [{:keys [resolver-fn]} (->> (:columns @state)
-                                   (filter #(= col-id (:col-id %)))
-                                   (first))
-        current-order-spec (->> (:sort-criteria @state)
-                                (filter #(= col-id (first %)))
-                                (first))]
-    ;; TODO: to implement asc/desc toggle 
-    ;; need to refactor sort-criteria ...
+  (let [current-col-order-spec (->> (:sort-criteria @state)
+                                    (filter #(= col-id (first %)))
+                                    (first))]
+    (println current-col-order-spec)
     (swap! state assoc 
       :sort-criteria 
-      [[col-id [resolver-fn {}]]])))
-
+      (if (= ::asc (second current-col-order-spec))
+        [[col-id ::desc]]
+        [[col-id ::asc]]))))
 
 ;; ==============================================================================
 ;; queries
@@ -78,12 +75,78 @@
 
 (defn q-sorted-records []
   (let [state @state
-        index (:logs-by-id state)
-        sort-criteria (map second (:sort-criteria state))]
-      (csort/sort-by-criteria sort-criteria (vals index))))
+        displayed-records (vals (:logs-by-id state)) ;; currently render all
+        columns-by-id (:columns-by-id state)
+        sort-criteria (-> (mapv 
+                            (fn [[col-id order]] 
+                              [(:resolver-fn (get columns-by-id col-id))
+                               ({::asc {::csort/order ::csort/asc ::csort/nils ::csort/last} 
+                                 ::desc {::csort/order ::csort/desc ::csort/nils ::csort/first}}
+                                order)])
+                            (:sort-criteria state)))]
+    (println "Sorting by: " sort-criteria)
+    (csort/sort-by-criteria sort-criteria displayed-records)))
+
 
 ;; ==============================================================================
 ;; see https://github.com/reagent-project/reagent-cookbook/blob/master/recipes/sort-table/src/cljs/sort_table/core.cljs
+
+;; TODO: split in stateful component and render-fn
+
+;; column-id, column-label, column-index
+
+;; in order selection of the record properties to be displayed in the table
+;; the order specifies the order of the columns in the table to be rendered in the table
+(def colspec [{:col-id "id"        :label "id"        :resolver-fn :id}
+              {:col-id "api"       :label "api"       :resolver-fn :api}
+              {:col-id "eventid"   :label "eventid"   :resolver-fn :eventid}
+              {:col-id "duration"  :label "duration"  :resolver-fn :duration}
+              {:col-id "sessionid" :label "sessionid" :resolver-fn :sessionid}])
+
+
+
+;; component local state impl
+
+(defn sort-records [colspec orders records] ;; todo add orders
+  (-> colspec
+      (mapv
+        (fn [{:keys [col-id resolver-fn order]}]
+          ({::asc  {::csort/order ::csort/asc 
+                    ::csort/nils ::csort/last}  
+            ::desc {::csort/order ::csort/desc 
+                    ::csort/nils ::csort/first}}
+           order)))
+      (csort/sort-by-criteria records)))
+
+;; pure render
+(defn render-table [{:keys [colspec records on-toggle-sort]}]
+  [:table
+    [:thead
+      [:tr
+        (for [[index {:keys [col-id label]}] (map-indexed vector colspec)]
+          ^{:key col-id}
+          [:th {:width "200" :on-click #(on-toggle-sort col-id)} label])]]
+    [:tbody
+      (for [record records]
+        ^{:key (:id record)} 
+        [:tr ;; todo render based on selected columns
+          [:td (:id record)]
+          [:td (:api record)]
+          [:td (:eventid record)]
+          [:td (:duration record)] 
+          [:td (:sessionid record)]])]])
+
+(defn component-table [records]
+  (let [colspec (reagent/atom colspec)
+        orders (reagent/atom (into {} (map #(vector (:col-id %) ::asc) @colspec)))]
+    [render-table 
+     {:colspec @colspec 
+      :records records ;; todo sort em
+      :on-toggle-sort (fn [col-id]
+                        (let [newval (if (= ::asc (get @orders col-id)) ::desc ::asc)]
+                          (swap! orders assoc col-id newval)         
+                          (println orders)))}]))
+
 
 (defn table []
   [:table
@@ -108,7 +171,9 @@
                  :width "600px"}}
     [:h1 "Datasort demo"]
     [:p "Sample uses log data - records with arbitrary fields"]
-    [table]])
+    [table]
+    [:h2 "Separate stateful and Stateless functions demo"]
+    [component-table dataset]])
     
     
 (defn ^:export main []

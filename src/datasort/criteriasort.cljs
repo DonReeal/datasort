@@ -45,7 +45,7 @@
       (compare-many [[some? compare]              [identity #(compare %2 %1)]])
       :else (throw (js/Error. (str "Not supported keyword combination: " [order nil-sorting]))))))
 
-(defn- cmp-fn2 [natural-order? nils-last?] ;; TODO spec only bools allowed
+(defn cmp-fn2 [natural-order? nils-last?] ;; TODO spec only bools allowed
   (let [handle-nils-criterion  ({true  [nil? compare]
                                  false [nil? #(compare %2 %1)]}
                                 nils-last?)
@@ -57,14 +57,12 @@
 
 (defn compile-comparator
   [{::keys [nils order]}]
-  (let [nils-criterion ({nil [nil? compare]
-                         ::last [nil? compare]
+  (let [nils-criterion ({::last [nil? compare]
                          ::nils-last [nil? compare]
                          ::first [some? compare]
                          ::nils-first [some? compare]} 
                         nils)
-        order-criterion ({nil [identity compare]
-                          ::asc [identity compare] 
+        order-criterion ({::asc [identity compare] 
                           ::ascending [identity compare]
                           ::desc [identity #(compare %2 %1)]
                           ::descending [identity #(compare %2 %1)]}
