@@ -9,9 +9,7 @@
 (enable-console-print!)
 
 ;; ==============================================================================
-;; set initial app state
-
-(pp/pprint (csort2/sort-by-criteria [[:id compare]] [{:id 1} {:id 2}]))
+;; app state, init
 
 (def dataset
   [{:id 1 :api "POST /foo" :duration 200 :sessionid "xxx-1"}
@@ -42,12 +40,6 @@
       ["duration"  ::asc]
       ["sessionid" ::asc]]}))
 
-(defn asc-compare []
-  ;; BROKEN :( csort/compile-comparator {::csort/nils ::csort/last ::csort/order ::csort/asc})
-  (csort/cmp-fn2 false true))
-
-(defn desc-compare []
-  (csort/cmp-fn2 false false))
 
 (add-watch state :trace-app-state
   (fn [key atom old-state new-state]
@@ -73,26 +65,9 @@
 
 ;; ==============================================================================
 ;; queries
-(defn q-columns []
-  (:columns @state))
-
-(defn q-sorted-records []
-  (let [state @state
-        displayed-records (vals (:logs-by-id state)) ;; currently render all
-        columns-by-id (:columns-by-id state)
-        sort-criteria (-> (mapv
-                            (fn [[col-id order]] 
-                              [(:resolver-fn (get columns-by-id col-id))
-                               ({::asc {::csort/order ::csort/asc ::csort/nils ::csort/last} 
-                                 ::desc {::csort/order ::csort/desc ::csort/nils ::csort/first}}
-                                order)])
-                            (:sort-criteria state)))]
-    (println "Sorting by: " sort-criteria)
-    (csort/sort-by-criteria sort-criteria displayed-records)))
 
 
 ;; ==============================================================================
-;; see https://github.com/reagent-project/reagent-cookbook/blob/master/recipes/sort-table/src/cljs/sort_table/core.cljs
 
 ;; TODO: split in stateful component and render-fn
 
@@ -148,32 +123,12 @@
                           (swap! orders assoc col-id newval)         
                           (println orders)))}]))
 
-
-(defn table []
-  [:table
-    [:thead
-      [:tr
-        (for [{:keys [col-id]} (q-columns)]
-          ^{:key col-id}
-          [:th {:width "200" :on-click #(toggle-sort-criterion col-id)} col-id])]]
-    [:tbody
-      (for [record (q-sorted-records)] 
-        ^{:key (:id record)} 
-        [:tr ;; todo render based on selected columns
-          [:td (:id record)]
-          [:td (:api record)]
-          [:td (:eventid record)]
-          [:td (:duration record)] 
-          [:td (:sessionid record)]])]])
-
 (defn home []
   [:div {:style {:margin "auto"
                  :padding-top "30px"
                  :width "600px"}}
     [:h1 "Datasort demo"]
     [:p "Sample uses log data - records with arbitrary fields"]
-    [table]
-    [:h2 "Separate stateful and Stateless functions demo"]
     [component-table dataset]])
     
     
