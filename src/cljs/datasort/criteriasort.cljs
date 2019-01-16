@@ -1,6 +1,5 @@
 (ns datasort.criteriasort
-  (:require [goog.array]
-            [clojure.spec.alpha :as clj.spec]))
+  (:require [clojure.spec.alpha :as clj.spec]))
 
 ;; TODO naming: criteria/criterion vs partition-by vs propsort / propertycompare (sort by data properties ...)
 ;; 

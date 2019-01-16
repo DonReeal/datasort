@@ -1,14 +1,18 @@
 (ns datasort.core
     (:require [cljs.reader]
-              [cljs.pprint]
+              [cljs.pprint :as pp]
               [clojure.spec.alpha :as spec]
               [datasort.criteriasort :as csort]
+              [datasort.criteriasort2 :as csort2]
               [reagent.core :as reagent]))
 
 (enable-console-print!)
 
 ;; ==============================================================================
 ;; set initial app state
+
+(pp/pprint (csort2/sort-by-criteria [[:id compare]] [{:id 1} {:id 2}]))
+
 (def dataset
   [{:id 1 :api "POST /foo" :duration 200 :sessionid "xxx-1"}
    {:id 2 :api "POST /foo" :duration 150 :sessionid "xxx-1"}
@@ -37,7 +41,6 @@
       ["eventid"   ::asc]
       ["duration"  ::asc]
       ["sessionid" ::asc]]}))
-                     
 
 (defn asc-compare []
   ;; BROKEN :( csort/compile-comparator {::csort/nils ::csort/last ::csort/order ::csort/asc})
@@ -49,7 +52,7 @@
 (add-watch state :trace-app-state
   (fn [key atom old-state new-state]
     (println (str "== " key " =="))
-    (cljs.pprint/pprint new-state)))
+    (pp/pprint new-state)))
 
 ;; ==============================================================================
 ;; actions
@@ -63,7 +66,7 @@
                                     (first))]
     (println current-col-order-spec)
     (swap! state assoc 
-      :sort-criteria 
+      :sort-criteria
       (if (= ::asc (second current-col-order-spec))
         [[col-id ::desc]]
         [[col-id ::asc]]))))
@@ -77,7 +80,7 @@
   (let [state @state
         displayed-records (vals (:logs-by-id state)) ;; currently render all
         columns-by-id (:columns-by-id state)
-        sort-criteria (-> (mapv 
+        sort-criteria (-> (mapv
                             (fn [[col-id order]] 
                               [(:resolver-fn (get columns-by-id col-id))
                                ({::asc {::csort/order ::csort/asc ::csort/nils ::csort/last} 
@@ -102,8 +105,6 @@
               {:col-id "eventid"   :label "eventid"   :resolver-fn :eventid}
               {:col-id "duration"  :label "duration"  :resolver-fn :duration}
               {:col-id "sessionid" :label "sessionid" :resolver-fn :sessionid}])
-
-
 
 ;; component local state impl
 

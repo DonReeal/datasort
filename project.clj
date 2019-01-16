@@ -7,18 +7,20 @@
   :min-lein-version "2.7.1"
 
   :dependencies [[org.clojure/clojure "1.10.0"]
-                 [org.clojure/clojurescript "1.10.238"]
+                 [org.clojure/clojurescript "1.10.439"]
                  [org.clojure/core.async  "0.4.474"]
                  [reagent "0.8.1"]]
 
-  :plugins [[lein-figwheel "0.5.16"]
-            [lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]]
+  :plugins [[lein-cljsbuild "1.1.7" :exclusions [[org.clojure/clojure]]]
+            [lein-figwheel "0.5.16"]]
 
-  :source-paths ["src"]
+  :source-paths ["src/clj" "src/cljs" "src/cljc"]
+
+  :test-paths ["test/clj" "test/cljc"]
 
   :cljsbuild {:builds
               [{:id "dev"
-                :source-paths ["src"]
+                :source-paths ["src/cljs"]
                 :figwheel {:on-jsload "datasort.core/on-js-reload"
                            :open-urls ["http://localhost:3449/index.html"]}
                 :compiler {:main datasort.core
