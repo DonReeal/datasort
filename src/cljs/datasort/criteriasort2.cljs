@@ -20,8 +20,12 @@
   (sort #(by-criteria criteria-seq %1 %2) coll))
 
 (defn- criteria [nils order] ;; TODO spec ::order in #{::order-asc ::order-desc}, ::nils in #{::nils-last ::nils-a}
-  (let [nils-criterion  ({::nils-last [nil? compare] ::nils-first [some? compare]} nils)
-        order-criterion ({::asc  [identity compare] ::desc [identity #(compare %2 %1)]} order)]
+  (let [nils-criterion
+        ({::nils-last  [nil? compare]
+          ::nils-first [some? compare]} nils)
+        order-criterion
+        ({::asc  [identity compare]
+          ::desc [identity #(compare %2 %1)]} order)]
     [nils-criterion order-criterion]))
 
 (defn cmp
@@ -38,8 +42,6 @@
   [nils order] ;; TODO: spec
   (fn [v1 v2] (cmp nils order v1 v2)))
 
-;; TODO: check performance and possibly use lower level code for cmp, cmp-fn that uses native js ifs for null checking - and <,> for comparison
-
 (comment
   (in-ns 'datasort.criteriasort2)
 
@@ -53,10 +55,22 @@
 
   (sort-by-criteria [[:api #(cmp ::nils-last ::asc %1 %2)]] dataset)
 
+  ;; fully blow examples
+
   (sort-by-criteria [[:api      (cmp-fn ::nils-last ::asc)]
                      [:eventid  (cmp-fn ::nils-last ::asc)]
                      [:duration (cmp-fn ::nils-last ::desc)]]
-                    dataset))
+                    dataset)
 
+  (sort-by-criteria [[:api      #(cmp ::nils-last ::asc  %1 %2)]
+                     [:eventid  #(cmp ::nils-last ::asc  %1 %2)]
+                     [:duration #(cmp ::nils-last ::desc %1 %2)]]
+                    dataset)
 
-
+  ;; TODO: check performance and possibly use lower level code for cmp, cmp-fn that uses native js ifs for null checking - and <,> for comparison - currently the above expands to the code below
+  (sort
+    (fn [a b] (by-criteria [[:api      (fn [a b] (by-criteria [[nil? compare] [identity compare]]                  a b))]
+                            [:eventid  (fn [a b] (by-criteria [[nil? compare] [identity compare]]                  a b))]
+                            [:duration (fn [a b] (by-criteria [[nil? compare] [identity (fn [a b] (compare a b))]] a b))]]
+                           a b))
+    dataset))
