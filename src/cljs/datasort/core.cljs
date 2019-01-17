@@ -27,7 +27,7 @@
 
 
 ;; helpers to init table state from dataset
-(defn dataset-by-id [ident-fn dataset]
+(defn init-records-by-id [ident-fn dataset]
   (into (sorted-map) (map #(vector (ident-fn %) %) dataset)))
 ;; (dataset-by-id :id dataset)
 
@@ -48,12 +48,9 @@
            (sort-by :col-id)))))
 
 ;; (init-colspec :id dataset)
-
-
-;; to swap the displayed columns order, change order criteria
-(defn swap [v index1 index2]
-  (assoc v index2 (v index1) index1 (v index2)))
-;; (swap [:id :eventid :bla] 0 2)
+(defn init [ident-fn records]
+  {:colspec (init-colspec  ident-fn records)
+   :records-by-id (init-records-by-id ident-fn records)})
 
 
 ;; ==============================================================================
@@ -61,17 +58,20 @@
 (def denormalized-table-state-model
   {;; initial columns definition for table row order and sort order definition
    :colspec ;; (init-colspec :id dataset)
-   [{:col-id "id"        :resolver-fn :id        :order :asc}
-    {:col-id "api"       :resolver-fn :api       :order :asc}
-    {:col-id "duration"  :resolver-fn :duration  :order :asc}
-    {:col-id "eventid"   :resolver-fn :eventid   :order :asc}
+   [{:col-id "id" :resolver-fn :id :order :asc}
+    {:col-id "api" :resolver-fn :api :order :asc}
+    {:col-id "duration" :resolver-fn :duration :order :asc}
+    {:col-id "eventid" :resolver-fn :eventid :order :asc}
     {:col-id "sessionid" :resolver-fn :sessionid :order :asc}]
    ;; read index for rendering
-   :logs-by-id ;; (dataset-by-id :id dataset)
+   :records-by-id ;; (dataset-by-id :id dataset)
    {1 {:id 1 :api "POST /foo" :duration 200 :sessionid "xxx-1"}
     2 {:id 2 :api "POST /foo" :duration 150 :sessionid "xxx-1"}
     3 {:id 3 :api "POST /bar" :duration 150 :sessionid "xxx-2"}
     4 {:id 4 :eventid "foo-created" :duration 150 :sessionid "xxx-2"}}})
+
+;; nice: (= denormalized-table-state-model (init :id dataset))
+
 
 (defonce state (reagent/atom denormalized-table-state-model))
 
@@ -91,6 +91,10 @@
     (swap! state assoc :colspec colspec1)))
 
 
+;; to swap the displayed columns order, change order criteria
+(defn swap [v index1 index2]
+  (assoc v index2 (v index1) index1 (v index2)))
+;; (swap [:id :eventid :bla] 0 2)
 
 
 
