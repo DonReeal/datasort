@@ -111,15 +111,40 @@
   (assoc v index2 (v index1) index1 (v index2)))
 
 
+(defn col-shift-left!
+  "Swaps the columns index position within the table with the column to its left"
+  [col-index]
+  (let [colspec-0 @*colspec
+        colspec-1 (swap colspec-0 col-index (dec col-index))]
+    (swap! state assoc :colspec colspec-1)))
+
+
+(defn col-shift-right!
+  "Swaps the columns index position within the table with the column to its right"
+  [col-index]
+  (let [colspec-0 @*colspec
+        colspec-1 (swap colspec-0 col-index (inc col-index))]
+    (swap! state assoc :colspec colspec-1)))
+
+
 ;; component local state impl =================================================================
 ;; pure render
-(defn render-table [{:keys [colspec records on-toggle-col-order]}]
+
+
+(defn render-table
+  [{:keys [colspec
+           records
+           on-toggle-col-order
+           on-col-shift-left
+           on-col-shift-right]}]
   [:table
-    [:thead
-      [:tr
-        (for [[index {:keys [col-id]}] (map-indexed vector colspec)]
-          ^{:key col-id}
-          [:th {:width "200" :on-click #(on-toggle-col-order index)} col-id])]]
+    [:thead>tr
+      (for [[index {:keys [col-id]}] (map-indexed vector colspec)]
+        ^{:key col-id}
+        [:th {:width "200px"}
+          (or (= index 0) nil [:span {:on-click #(on-col-shift-left index)} "< "])
+          [:span {:on-click #(on-toggle-col-order index)} col-id]
+          (or (= index (- (count colspec) 1)) nil [:span {:on-click #(on-col-shift-right index)} " >"])])]
     [:tbody
       (for [record records]
         ^{:key (:id record)} 
@@ -127,6 +152,7 @@
           (for [{:keys [col-id resolver-fn]} colspec]
             ^{:key col-id}
             [:td (resolver-fn record)])])]])
+
 
 (defn coltosort-criterion [{:keys [resolver-fn order]}]
   (let [criterion-comparator-fn
@@ -136,9 +162,9 @@
     [resolver-fn criterion-comparator-fn]))
 
 
-(defn sort-by-colspec [colspec records]
+(defn sort-by-colspec [columns-spec records]
     (csort2/sort-by-criteria
-      (map coltosort-criterion colspec)
+      (map coltosort-criterion columns-spec)
       records))
 
 
@@ -148,8 +174,9 @@
     [render-table
       {:colspec colspec
        :records @*sorted-records
-       :on-toggle-col-order toggle-col-order!}]))
-
+       :on-toggle-col-order toggle-col-order!
+       :on-col-shift-left col-shift-left!
+       :on-col-shift-right col-shift-right!}]))
 
 (defn home []
   [:div {:style {:margin "auto"
