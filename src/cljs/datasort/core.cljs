@@ -1,7 +1,6 @@
 (ns datasort.core
     (:require [cljs.reader]
               [cljs.pprint :as pp]
-              [clojure.spec.alpha :as spec]
               [datasort.criteriasort2 :as csort2]
               [reagent.core :as reagent]
               [reagent.ratom :as rg.ratom]))
