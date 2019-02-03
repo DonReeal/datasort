@@ -23,7 +23,7 @@
     (csort2/sort-by-criteria criteria dataset))) ;; => [2 1 4 3]
   
 ;; csort2 has cmp util to declare order of nil values
-(sort #(csort2/cmp ::csort2/nils-last ::csort2/asc %1 %2) [nil 3 2 nil 2 3 nil]) ;; => (2 2 3 3 nil nil nil)
+(sort #(csort2/cmp ::csort2/nils-las**t ::csort2/asc %1 %2) [nil 3 2 nil 2 3 nil]) ;; => (2 2 3 3 nil nil nil)
   
 ;; as passing ascending as ::asc and also passing in order  of comparison via %1 %2 ... a version easier to the eye
 (sort (csort2/cmp-fn ::csort2/nils-last ::csort2/asc) [nil 3 2 nil 2 3 nil]) ;; => (2 2 3 3 nil nil nil)
