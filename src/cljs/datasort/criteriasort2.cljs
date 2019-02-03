@@ -17,7 +17,6 @@
 (defn sort-by-criteria
   "Sorts a collection based on the criteria-seq. Criteria must be a sequence of resolver-fn, comparator-fn pairs."
   [criteria-seq coll] ;; TODO: spec
-  (println "sort-by-criteria: " criteria-seq)
   (sort #(by-criteria criteria-seq %1 %2) coll))
 
 (defn- criteria [nils order] ;; TODO spec ::order in #{::order-asc ::order-desc}, ::nils in #{::nils-last ::nils-a}
