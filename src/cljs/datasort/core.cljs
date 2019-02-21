@@ -132,20 +132,29 @@
 ;; ui components
 ;; ==============================================================================
 
+;; TODO: make accessible header
+;; https://www.w3.org/TR/wai-aria-practices/examples/grid/dataGrids.html
+
 (defn render-table
   [{:keys [columns
-           records
            on-toggle-col-order
            on-col-shift-left
-           on-col-shift-right]}]
-  [:table
-    [:thead>tr
-      (for [[index {:keys [col-id]}] (map-indexed vector columns)]
-        ^{:key col-id}
-        [:th {:width "200px"}
-          (or (= index 0) nil [:span {:on-click #(on-col-shift-left index)} "< "])
-          [:span {:on-click #(on-toggle-col-order index)} col-id]
-          (or (= index (- (count columns) 1)) nil [:span {:on-click #(on-col-shift-right index)} " >"])])]
+           on-col-shift-right
+           records]}]
+  [:table {:role "grid"}
+    [:thead
+      [:tr
+        (for [[index {:keys [col-id order]}] (map-indexed vector columns)]
+          ^{:key col-id}
+          [:th {:aria-sort ({:asc "ascending" :desc "descending"} order)
+                :width "200px"}
+           ;; left nav
+           (or (= index 0) nil [:span {:on-click #(on-col-shift-left index)} "< "])
+           [:span {:role "button"
+                   :on-click  #(on-toggle-col-order index)}
+            col-id]
+           ;; right nav
+           (or (= index (- (count columns) 1)) nil [:span {:on-click #(on-col-shift-right index)} " >"])])]]
     [:tbody
       (for [record records]
         ^{:key (:id record)} 
