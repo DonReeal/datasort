@@ -146,15 +146,29 @@
       [:tr
         (for [[index {:keys [col-id order]}] (map-indexed vector columns)]
           ^{:key col-id}
-          [:th {:aria-sort ({:asc "ascending" :desc "descending"} order)
-                :width "200px"}
+          [:th
+           {:aria-sort ({:asc "ascending" :desc "descending"} order)
+            :width "200px"}
            ;; left nav
-           (or (= index 0) nil [:span {:on-click #(on-col-shift-left index)} "< "])
-           [:span {:role "button"
-                   :on-click  #(on-toggle-col-order index)}
+           (or (= index 0)
+             nil
+             [:span
+              {:role "button"
+               :aria-label "Swap this column with the column to its left. Will change sort order of the table."
+               :on-click #(on-col-shift-left index)}
+              "< "])
+           [:span
+            {:role "button"
+             :on-click  #(on-toggle-col-order index)}
             col-id]
            ;; right nav
-           (or (= index (- (count columns) 1)) nil [:span {:on-click #(on-col-shift-right index)} " >"])])]]
+           (or (= index (- (count columns) 1))
+             nil
+             [:span
+              {:role "button"
+               :aria-label "Swap this column with the column to its right. Will change sort order of the table."
+               :on-click #(on-col-shift-right index)}
+              " >"])])]]
     [:tbody
       (for [record records]
         ^{:key (:id record)} 
