@@ -17,7 +17,7 @@ p  { font-size: 1.0em }
     border-right: 0.4em solid transparent;
     position: absolute;
     right: 0em;
-    top: 0.5em;
+    top: 0.75em;
 }
 [aria-sort="descending"] { position: relative; }
 [aria-sort="descending"]::after {
@@ -25,7 +25,19 @@ p  { font-size: 1.0em }
     border-left: 0.4em solid transparent;
     border-right: 0.4em solid transparent;
     border-top: 0.4em solid black;
+
     position: absolute;
     right: 0em;
-    top: 0.5em;
+    top: 0.75em;
+}
+
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+}
+th, td {
+  padding: 0.25em;
+  text-align: left;
+  border: 1px solid #ccc;
 }
