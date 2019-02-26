@@ -23,6 +23,7 @@ I decided to build a custom dsl for declaring comparators - see datasort.compara
 
 ## Setup
 
+
 To get an interactive development environment run:
 
     lein figwheel
@@ -46,6 +47,11 @@ To create a production build run:
 
 And open your browser in `resources/public/index.html`. You will not
 get live reloading, nor a REPL.
+
+## Interactive development with Cursive IDE
+
+To launch interactive development environment in cursive launch 
+run configuration LOCAL REPL (defined in .idea/runConfigurations/LOCAL_REPL.xml)
 
 ## License
 
