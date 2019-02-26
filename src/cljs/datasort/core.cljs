@@ -11,9 +11,10 @@
 ;; (currenly importing is not implemented yet)
 (def dataset
   [{:id 1 :api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
-   {:id 2 :api     "POST /foo"   :duration 150 :sessionid "xxx-1"}
-   {:id 3 :api     "POST /bar"   :duration 150 :sessionid "xxx-2"}
-   {:id 4 :eventid "foo-created" :duration 150 :sessionid "xxx-2"}])
+   {:id 2 :api     "POST /foo"   :duration 15  :sessionid "xxx-1"}
+   {:id 3 :api     "POST /bar"   :duration 15  :sessionid "xxx-2"}
+   {:id 4 :eventid "foo-created" :duration 15  :sessionid "xxx-2"}
+   {:id 5 :eventid "foo-created" :duration 3386 :sessionid "xxx-2"}])
 
 ;; ==============================================================================
 ;; simulating json-import - currently a bunch of helpers to init table state
@@ -205,7 +206,7 @@
                  :padding-top "30px"
                  :width "600px"}}
     [:h1 "Datasort demo"]
-    [:p "Sample uses log data - records with arbitrary fields"]
+    ;; [:p "Sample uses log data - records with arbitrary fields"]
     [component-table]])
     
     

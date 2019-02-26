@@ -12,11 +12,11 @@ p  { font-size: 1.0em }
 [aria-sort="ascending"] { position: relative; }
 [aria-sort="ascending"]::after {
     content: " ";
-    border-bottom: 0.4em solid black;
+    border-bottom: 0.4em solid white;
     border-left: 0.4em solid transparent;
     border-right: 0.4em solid transparent;
     position: absolute;
-    right: 0em;
+    right: 0.25em;
     top: 0.75em;
 }
 [aria-sort="descending"] { position: relative; }
@@ -24,20 +24,26 @@ p  { font-size: 1.0em }
     content: " ";
     border-left: 0.4em solid transparent;
     border-right: 0.4em solid transparent;
-    border-top: 0.4em solid black;
-
+    border-top: 0.4em solid white;
     position: absolute;
-    right: 0em;
+    right: 0.25em;
     top: 0.75em;
 }
 
 
 table {
-  border-collapse: collapse;
-  width: 100%;
+    border-collapse: collapse;
+    width: 100%;
+}
+thead {
+    background: #000000;
+    color: #ffffff;
+}
+
+tbody tr:hover {
+    background: #bed1be;
 }
 th, td {
-  padding: 0.25em;
-  text-align: left;
-  border: 1px solid #ccc;
+    padding: 0.25em;
+    text-align: left;
 }
