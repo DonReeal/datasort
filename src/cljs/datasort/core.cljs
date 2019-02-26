@@ -10,11 +10,328 @@
 ;; Given a dataset in EDN - let the user sort by all keys that dataset contains
 ;; (currenly importing is not implemented yet)
 (def dataset
-  [{:id 1 :api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
-   {:id 2 :api     "POST /foo"   :duration 15  :sessionid "xxx-1"}
-   {:id 3 :api     "POST /bar"   :duration 15  :sessionid "xxx-2"}
-   {:id 4 :eventid "foo-created" :duration 15  :sessionid "xxx-2"}
-   {:id 5 :eventid "foo-created" :duration 3386 :sessionid "xxx-2"}])
+  (map-indexed
+    (fn [i v] (assoc v :id (inc i)))
+    [{:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 1   :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 711  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 74 :sessionid "xxx-2"}
+     {:api     "POST /foo"   :duration 74 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 77  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 14  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 74  :sessionid "xxx-3"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 15  :sessionid "xxx-4"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-3"}
+     {:eventid "foo-created" :duration 15  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-5"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 85  :sessionid "xxx-6"}
+     {:api     "POST /bar"   :duration 15  :sessionid "xxx-6"}
+     {:eventid "foo-created" :duration 22  :sessionid "xxx-7"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-7"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-1"}
+     {:api     "POST /foo"   :duration 22  :sessionid "xxx-7"}
+     {:api     "POST /bar"   :duration 28  :sessionid "xxx-4"}
+     {:eventid "bar-created" :duration 58  :sessionid "xxx-5"}
+     {:eventid "foo-created" :duration 3386 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 789 :sessionid "xxx-6"}
+     {:api     "POST /foo"   :duration 74  :sessionid "xxx-8"}
+     {:api     "POST /bar"   :duration 1258  :sessionid "xxx-2"}
+     {:eventid "bar-created" :duration 782  :sessionid "xxx-6"}
+     {:eventid "bar-created" :duration 3386 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 88 :sessionid "xxx-4"}
+     {:api     "POST /foo"   :duration 23  :sessionid "xxx-1"}
+     {:api     "POST /bar"   :duration 71  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 17  :sessionid "xxx-8"}
+     {:eventid "foo-created" :duration 74 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 200 :sessionid "xxx-9"}
+     {:api     "POST /foo"   :duration 96  :sessionid "xxx-9"}
+     {:api     "POST /bar"   :duration 85  :sessionid "xxx-1"}
+     {:eventid "bar-created" :duration 12  :sessionid "xxx-2"}
+     {:eventid "foo-created" :duration 3588 :sessionid "xxx-8"}]))
 
 ;; ==============================================================================
 ;; simulating json-import - currently a bunch of helpers to init table state
