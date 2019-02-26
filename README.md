@@ -48,7 +48,7 @@ To create a production build run:
 And open your browser in `resources/public/index.html`. You will not
 get live reloading, nor a REPL.
 
-## Interactive development with Cursive IDE
+## Interactive development with Cursive
 
 To launch interactive development environment in cursive launch 
 run configuration LOCAL REPL (defined in .idea/runConfigurations/LOCAL_REPL.xml)
