@@ -5,7 +5,12 @@
 
 * [x] API based on passing functions (DONE: criteriasort2)
 * [x] API for declaring comparators on single properties (DONE: criteriasort2)
-
+* [x] Performance tuning on sorting 
+      
+      * consider https://en.wikipedia.org/wiki/Schwartzian_transform (decorate-sort-undecorate) for speedup
+      * consider progress indicator on sorting to smoothen ux
+      * consider sorting async https://stackoverflow.com/questions/45661247/implement-async-await-in-sort-function-of-arrays-javascript
+      * consider using nil-checking instead of nesting function calls for low level comparators in datasort.criteriasort/cmp, datasort.criteriasort/cmp-fn
 
 ## Table-UI
 
