@@ -2,7 +2,7 @@
 
 Explore data in a tabular UI using null friendly, deterministic sorting implemented in ClojureScript. The leading example for implementation is sorting json log messages with arbitrary properties. Inspired by the great *clojure.core/sort-by* function.
 
-## datasort.comparators - DSL for multi-field comparators
+## datasort.criteriasort - DSL for multi-field comparators
 
 ### Limitations of the core apis that I know of
 
@@ -19,7 +19,7 @@ Investigating on the core apis made me write down what I was looking for when de
 1. it must be possible to sort nils last within each partition
 1. dynamic generation of sort orders should be simple
 
-I decided to build a custom dsl for declaring comparators - see datasort.comparators.
+I decided to build a custom dsl for declaring comparators - [example usage of datasort.criteriasort](src/cljs/datasort/criteriasort.md) .
 
 ## Setup
 
