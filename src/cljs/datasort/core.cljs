@@ -1,6 +1,6 @@
 (ns datasort.core
     (:require [cljs.reader]
-              [datasort.criteriasort :as csort2]
+              [datasort.criteriasort :as csort]
               [reagent.core :as reagent]
               [reagent.ratom :as rg.ratom]))
 
@@ -490,13 +490,13 @@
 
 (defn colspec->sortcriterion [{:keys [resolver-fn order]}]
   (let [criterion-comparator-fn
-        ({:asc  #(csort2/cmp ::csort2/nils-last ::csort2/asc %1 %2)
-          :desc #(csort2/cmp ::csort2/nils-last ::csort2/asc %2 %1)}
+        ({:asc  #(csort/cmp ::csort/nils-last ::csort/asc %1 %2)
+          :desc #(csort/cmp ::csort/nils-last ::csort/asc %2 %1)}
          order)]
     [resolver-fn criterion-comparator-fn]))
 
 (defn- sort-by-colspec [columns records]
-    (csort2/sort-by-criteria
+    (csort/sort-by-criteria
       (map colspec->sortcriterion columns)
       records))
 
