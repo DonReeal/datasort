@@ -1,6 +1,6 @@
 # datasort - Exploring data visually by sorting
 
-Explore data in a tabular UI using null friendly, deterministic sorting implemented in ClojureScript. The leading example for implementation is sorting json log messages with arbitrary properties. Inspired by the great *clojure.core/sort-by* function.
+[Explore data](https://donreeal.github.io/datasort/) in a tabular UI using null friendly, deterministic sorting implemented in ClojureScript. The leading example for implementation is sorting json log messages with arbitrary properties. Inspired by the great *clojure.core/sort-by* function.
 
 ## datasort.criteriasort - DSL for multi-field comparators
 
