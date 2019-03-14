@@ -25,6 +25,10 @@
 * [ ] build [<|******|>] shift ui-component  (wrapper-component)
 * [x] integrate shift with reordering columns, update sort order accordingly
 * [ ] build [:asc|:desc] toggle ui-component (leaf-component) [toggle component talk](https://youtu.be/b_uum_iYShE?t=486)           
+* [ ] sort indicator belongs to column title button, currently interferes with swap buttons
+        
+        * ? css class for all theader-s, decorate theader with sort indicator, pad it by the width of the swap buttons 
+        * ? remove swap buttons, replace with drag and drop to clean up layout, still swap indicators need to be in dom and visible to indicate drag and drop behaviour 
 
 
 ## file loading
