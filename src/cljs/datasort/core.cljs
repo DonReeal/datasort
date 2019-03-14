@@ -1,11 +1,8 @@
 (ns datasort.core
     (:require [cljs.reader]
-              [cljs.pprint :as pp]
               [datasort.criteriasort :as csort2]
               [reagent.core :as reagent]
               [reagent.ratom :as rg.ratom]))
-
-(enable-console-print!)
 
 ;; Given a dataset in EDN - let the user sort by all keys that dataset contains
 ;; (currenly importing is not implemented yet)
@@ -379,11 +376,6 @@
 ;; ==============================================================================
 
 (defonce state (reagent/atom (initial-state :id dataset)))
-
-(add-watch state :trace-app-state
-           (fn [key atom old-state new-state]
-             (println (str "== " key " =="))
-             (pp/pprint new-state)))
 
 ;; to serve arbitrary data use (initial-state ident-fn records)
 (comment
