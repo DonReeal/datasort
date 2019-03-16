@@ -377,6 +377,12 @@
 
 (defonce state (reagent/atom (initial-state :id dataset)))
 
+(add-watch state 
+           :trace-app-state
+           (fn [key atom old-state new-state]
+             (println (str "active element after transition:  " (.-id (.-activeElement js/document))))))
+
+
 ;; to serve arbitrary data use (initial-state ident-fn records)
 (comment
   ;; initial-app-state typed out for readability
@@ -445,6 +451,65 @@
 ;; TODO: make accessible header
 ;; https://www.w3.org/TR/wai-aria-practices/examples/grid/dataGrids.html
 
+;; key utils see spec: https://developer.mozilla.org/de/docs/Web/API/KeyboardEvent/key
+
+(defn when-enter [e effect-fn]
+  (when (= (.-key e) "Enter")
+        (effect-fn)
+        (.preventDefault e)))
+
+(defn when-space [e effect-fn]
+  (when (let [key (.-key e)]
+          (or (= key " ")
+              (= key "Spacebar")))
+        (effect-fn)
+        (.preventDefault e)))
+
+;; TODO add arrow navigation?
+
+;; TODO: drag and drop
+;; when selecting drag source
+;; implement radio button like behaviour
+;; with arrow left + up and arrow top and right + space for navigating selections
+;; 
+
+;; FIXME when using swap right button on last possible right swap
+;; focus is not restored as expected, tabindex 
+;; why is the focus even on the same value, and not on the same dom-element after swapping????
+;; wtf is react doing here?
+;; could i hack it by using onblur?
+;; MAYBE TRY: completely different implementation with roving tabindex
+;; <-> all but active have tabindex -1 which allows for arrow navigation
+;; 
+
+(defn when-left-arrow [e effect-fn]
+  (when (let [key (.-key e)]
+          (or (= key "LeftArrow")
+              (= key "Left")))
+        (effect-fn)
+        (.preventDefault e)))
+
+(defn when-right-arrow [e effect-fn]
+  (when (let [key (.-key e)]
+          (or (= key "RightArrow")
+              (= key "Right")))
+        (effect-fn)
+        (.preventDefault e)))
+
+(defn when-up-arrow [e effect-fn]
+  (when (let [key (.-key e)]
+          (or (= key "UpArrow")
+              (= key "Up")))
+        (effect-fn)
+        (.preventDefault e)))
+
+(defn when-down-arrow [e effect-fn]
+  (when (let [key (.-key e)]
+          (or (= key "DownArrow")
+              (= key "Down")))
+        (effect-fn)
+        (.preventDefault e)))
+
 (defn render-table
   [{:keys [columns
            on-toggle-col-order
@@ -454,7 +519,8 @@
   [:table {:role "grid"}
     [:thead
       [:tr
-        (for [[index {:keys [col-id order]}] (map-indexed vector columns)]
+        (for [[index {:keys [col-id order]}] (map-indexed vector columns)
+              :let [column-tabindex (* (+ index 1) 10)]]
           ^{:key col-id}
           [:th
            {:aria-sort ({:asc "ascending" :desc "descending"} order)
@@ -463,21 +529,38 @@
            (or (= index 0)
              nil
              [:span
-              {:role "button"
+              {:id (str col-id "-leftNav")
+               :tab-index (+ column-tabindex 1)
+               :role "button"
                :aria-label "Swap this column with the column to its left. Will change sort order of the table."
-               :on-click #(on-col-shift-left index)}
+               :on-click #(on-col-shift-left index)
+               :on-key-press (fn [e] (when-enter e #(on-col-shift-left index)))
+               :on-focus (fn [e] (println (str "Got focus: " (.-id (.-target e)))))
+               :on-blur (fn [e] (println (str "Lost focus: " (.-id (.-target e)))))}
               "< "])
+           ;; column main control
            [:span
-            {:role "button"
-             :on-click  #(on-toggle-col-order index)}
+            {:id (str col-id "-columnControl")
+             :tab-index (+ column-tabindex 2)
+             :role "button"
+             :on-click  #(on-toggle-col-order index)
+             :on-key-press (fn [e] (when-enter e #(on-toggle-col-order index))
+                                   (when-space e #(.alert js/window "TODO: Drag source selected! Should render selection of drag targets here!")))  
+             :on-focus (fn [e] (println (str "Got focus: " (.-id (.-target e)))))
+             :on-blur (fn [e] (println (str "Lost focus: " (.-id (.-target e)))))}
             col-id]
            ;; right nav
            (or (= index (- (count columns) 1))
              nil
              [:span
-              {:role "button"
+              {:id (str col-id "-rightNav")
+               :tab-index (+ column-tabindex 3)
+               :role "button"
                :aria-label "Swap this column with the column to its right. Will change sort order of the table."
-               :on-click #(on-col-shift-right index)}
+               :on-click #(on-col-shift-right index)
+               :on-key-press (fn [e] (when-enter e #(on-col-shift-right index)))
+               :on-focus (fn [e] (println (str "Got focus: " (.-id (.-target e)))))
+               :on-blur (fn [e] (println (str "Lost focus: " (.-id (.-target e)))))}
               " >"])])]]
     [:tbody
       (for [record records]
